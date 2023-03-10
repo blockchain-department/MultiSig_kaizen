@@ -3,6 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import { ethers } from "ethers";
 import Navbar from "./components/Navbar";
 import Create from "./components/CreateWallet";
+import { abi } from "./contract/contractAbi";
+import { address } from "./contract/contractAddress";
+import MultiSigs from "./components/MultiSigs";
+import MultiSigDetails from "./components/MultiSigDetails";
 
 function App() {
   const [wallet, setWallet] = useState({});
@@ -13,12 +17,20 @@ function App() {
         await window.ethereum.enable();
         const accounts = await window.ethereum.send("eth_requestAccounts");
         const _signer = new ethers.providers.Web3Provider(window.ethereum);
-        setWallet({
-          ...wallet,
-          address: accounts?.result[0],
-          signer: _signer.getSigner(),
-          network: await _signer.getNetwork(),
-        });
+        let contract = new ethers.Contract(address, abi, _signer.getSigner());
+        // console.log("useee", contract);
+        if (
+          accounts?.result[0]?.toLowerCase() != wallet?.address?.toLowerCase()
+        ) {
+          setWallet({
+            ...wallet,
+            contract: contract,
+            address: accounts?.result[0],
+            provider: _signer,
+            signer: _signer.getSigner(),
+            network: await _signer.getNetwork(),
+          });
+        }
       } catch (error) {
         console.log("Error:", error.message);
       }
@@ -55,15 +67,15 @@ function App() {
   // Detect change in Metamask accounts
   useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on("chainChanged", () => handleConnectWallet());
-      window.ethereum.on("accountsChanged", () => handleSwitchNetwork());
+      window.ethereum.on("chainChanged", () => handleSwitchNetwork());
+      window.ethereum.on("accountsChanged", () => handleConnectWallet());
     }
   });
   // Connect wallet on Refresh Page
   useEffect(() => {
     handleConnectWallet();
     // eslint-disable-next-line
-  }, []);
+  }, [wallet]);
   console.log("Wallet:", wallet);
   return (
     <>
@@ -76,6 +88,11 @@ function App() {
         />
         <Routes>
           <Route path="/" element={<Create wallet={wallet} />} />
+          <Route path="multiSigs" element={<MultiSigs wallet={wallet} />} />
+          <Route
+            path="multiSigDetail"
+            element={<MultiSigDetails wallet={wallet} />}
+          />
         </Routes>
       </div>
     </>

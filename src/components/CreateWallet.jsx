@@ -29,13 +29,52 @@ function Create({ wallet }) {
   const [subscription, setSubsctiption] = useState(1);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isEth, setIsEth] = useState(true);
-
+  const [priceEth, setPriceEth] = useState({
+    s1: 0,
+    s2: 0,
+    s3: 0,
+  });
+  const [priceToken, setPriceToken] = useState({
+    s1Token: 0,
+    s2Token: 0,
+    s3Token: 0,
+  });
   console.log(subscription);
   // useEffect(() => {
   //   return () => {
   //     setSubsctiption(subscription);
   //   };
   // }, [subscription]);
+  const getPrices = async () => {
+    console.log("use", wallet?.contract);
+    let s1 = ethers.BigNumber.from(await wallet?.contract?.s1()).toString();
+    let s2 = ethers.BigNumber.from(await wallet?.contract?.s2()).toString();
+    let s3 = ethers.BigNumber.from(await wallet?.contract?.s3()).toString();
+    let s1Token = ethers.BigNumber.from(
+      await wallet?.contract?.s1Token()
+    ).toString();
+    let s2Token = ethers.BigNumber.from(
+      await wallet?.contract?.s2Token()
+    ).toString();
+    let s3Token = ethers.BigNumber.from(
+      await wallet?.contract?.s3Token()
+    ).toString();
+
+    setPriceEth({
+      s1: s1,
+      s2: s2,
+      s3: s3,
+    });
+    setPriceToken({
+      s1Token: s1Token,
+      s2Token: s2Token,
+      s3Token: s3Token,
+    });
+  };
+  console.log(priceEth, priceToken);
+  useEffect(() => {
+    getPrices();
+  }, [wallet]);
 
   // Stepper
 
@@ -62,7 +101,14 @@ function Create({ wallet }) {
             subscription.toString(),
             false,
             {
-              value: "100",
+              value:
+                subscription == 1
+                  ? priceEth?.s1
+                  : subscription == 2
+                  ? priceEth?.s2
+                  : subscription == 3
+                  ? priceEth?.s3
+                  : null,
             }
           )
           .then((transaction) => {
@@ -92,7 +138,16 @@ function Create({ wallet }) {
     } else {
       toast.promise(
         await tokenContract
-          .approve(address, ethers.utils.parseEther("50"))
+          .approve(
+            address,
+            subscription == 1
+              ? priceToken?.s1Token
+              : subscription == 2
+              ? priceToken?.s2Token
+              : subscription == 3
+              ? priceToken?.s3Token
+              : null
+          )
           .then((transaction) => {
             toast.promise(
               transaction
@@ -200,15 +255,24 @@ function Create({ wallet }) {
                     </h5>
                   </a>
                   <p class="mb-8 mt-4 font-normal text-gray-700 dark:text-gray-400">
-                    Can Handle <span className="text-[#B7E82E]">5</span> Tokens
-                    and a Native Coin
+                    Can Handle
+                    <span className="text-[#B7E82E] text-lg"> 3</span> Owners
+                    and
+                    <span className="text-[#B7E82E]"> 5</span> Tokens and a
+                    Native Coin
                     <br />
                     <br />
                     <span className="text-white font-bold  text-xl">Price</span>
                     <br />
-                    Eth &nbsp; &nbsp; - 1 Eth
+                    Eth &nbsp; &nbsp; -{" "}
+                    {ethers.utils.formatEther(priceEth?.s1).toString()}
+                    Eth
                     <br />
-                    Coin - 0.5 Token
+                    Coin -{" "}
+                    {ethers.utils
+                      .formatEther(priceToken?.s1Token)
+                      .toString()}{" "}
+                    Token
                   </p>
                   <button
                     // href="#"
@@ -229,15 +293,24 @@ function Create({ wallet }) {
                     </h5>
                   </a>
                   <p class="mb-8 mt-4 font-normal text-gray-700 dark:text-gray-400">
-                    Can Handle <span className="text-[#B7E82E] ">10</span>{" "}
-                    Tokens and a Native Coin
+                    Can Handle
+                    <span className="text-[#B7E82E] text-lg"> 5</span> Owners
+                    and
+                    <span className="text-[#B7E82E] "> 10</span> Tokens and a
+                    Native Coin
                     <br />
                     <br />
                     <span className="text-white font-bold  text-xl">Price</span>
                     <br />
-                    Eth &nbsp; &nbsp; - 1 Eth
+                    Eth &nbsp; &nbsp; -{" "}
+                    {ethers.utils.formatEther(priceEth?.s2).toString()}
+                    Eth
                     <br />
-                    Coin - 0.5 Token
+                    Coin -{" "}
+                    {ethers.utils
+                      .formatEther(priceToken?.s2Token)
+                      .toString()}{" "}
+                    Token
                   </p>
                   <button
                     // href="#"
@@ -259,15 +332,23 @@ function Create({ wallet }) {
                   </a>
                   <p class="mb-8 mt-4 font-normal text-gray-700 dark:text-gray-400">
                     Can Handle{" "}
-                    <span className="text-[#B7E82E] text-lg">15</span> Tokens
+                    <span className="text-[#B7E82E] text-lg"> 10</span> Owners
+                    and
+                    <span className="text-[#B7E82E] text-lg"> 15</span> Tokens
                     and a Native Coin
                     <br />
                     <br />
                     <span className="text-white font-bold  text-xl">Price</span>
                     <br />
-                    Eth &nbsp; &nbsp; - 1 Eth
+                    Eth &nbsp; &nbsp; -{" "}
+                    {ethers.utils.formatEther(priceEth?.s3).toString()}
+                    Eth
                     <br />
-                    Coin - 0.5 Token
+                    Coin -{" "}
+                    {ethers.utils
+                      .formatEther(priceToken?.s3Token)
+                      .toString()}{" "}
+                    Token
                   </p>
                   <button
                     // href="#"

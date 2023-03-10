@@ -12,7 +12,7 @@ body {
   
     background-repeat: no-repeat;
     background-size: 100vh;
-  height:100vh;
+  min-height:100vh;
 
     background: #180350;
     background-image: radial-gradient(at 61% 8%, #8c1a99 0px, transparent 50%),
@@ -28,7 +28,7 @@ body {
   background: #00000099;
   /* opacity: 0.8; */
   /* position: absolute; */
-  height:100vh;
+  min-height:100vh;
   /* z-index: 0; */
 }
 

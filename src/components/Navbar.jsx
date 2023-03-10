@@ -26,7 +26,7 @@ function Navbar({ wallet, connectWallet, disconnectWallet }) {
               <Link to="/">Create</Link>
             </li>
             <li className="inline mr-4 cursor-pointer hover:text-[#B7E82E]">
-              <Link to="/">MultiSigs</Link>
+              <Link to="/multisigs">MultiSigs</Link>
             </li>
             <li className="inline mr-4 cursor-pointer hover:text-[#B7E82E]">
               <Link to="/">Transactions</Link>
@@ -78,7 +78,7 @@ function Navbar({ wallet, connectWallet, disconnectWallet }) {
                 </span>
                 Create MultiSig
               </Link>
-              <Link to="/" className="flex items-center">
+              <Link to="/multisigs" className="flex items-center">
                 <span>
                   <MdCoffeeMaker className="mr-2" />
                 </span>
